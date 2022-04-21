@@ -1,0 +1,64 @@
+import pathlib
+import subprocess
+from importlib.metadata import version
+
+from invoke import task
+
+from MyFirstLibrary import myfirstlibrary
+
+ROOT = pathlib.Path(__file__).parent.resolve().as_posix()
+VERSION = version("robotframework-myfirstlibrary")
+
+@task
+def utests(context):
+    cmd = [
+        "coverage",
+        "run",
+        "--source=MyFirstLibrary",
+        "-p",
+        "-m",
+        "pytest",
+        f"{ROOT}/utest",
+    ]
+    subprocess.run(" ".join(cmd), shell=True, check=False)
+
+@task
+def atests(context):
+    cmd = [
+        "coverage",
+        "run",
+        "--source=MyFirstLibrary",
+        "-p",
+        "-m",
+        "robot",
+        "--loglevel=TRACE:DEBUG",
+        f"{ROOT}/atest",
+    ]
+    subprocess.run(" ".join(cmd), shell=True, check=False)
+
+@task(utests, atests)
+def tests(context):
+    subprocess.run("coverage combine", shell=True, check=False)
+    subprocess.run("coverage report", shell=True, check=False)
+    subprocess.run("coverage html", shell=True, check=False)
+
+@task
+def libdoc(context):
+    print(f"Generating libdoc for library version {VERSION}")
+    target = f"{ROOT}/docs/myfirstlibrary.html"
+    cmd = [
+        "python",
+        "-m",
+        "robot.libdoc",
+        "-n MyFirstLibrary",
+        f"-v {VERSION}",
+        "MyFirstLibrary",
+        target,
+    ]
+    subprocess.run(" ".join(cmd), shell=True, check=False)
+
+@task
+def readme(context):
+    with open(f"{ROOT}/docs/README.md", "w", encoding="utf-8") as readme:
+        doc_string = myfirstlibrary.__doc__
+        readme.write(str(doc_string).replace("\\", "\\\\").replace("\\\\*", "\\*"))
