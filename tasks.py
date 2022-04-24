@@ -61,4 +61,4 @@ def libdoc(context):
 def readme(context):
     with open(f"{ROOT}/docs/README.md", "w", encoding="utf-8") as readme:
         doc_string = myfirstlibrary.__doc__
-        readme.write(str(doc_string).replace("\\", "\\\\").replace("\\\\*", "\\*"))
+        readme.write(str(doc_string))
