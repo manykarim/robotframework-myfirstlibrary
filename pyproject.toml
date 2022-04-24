@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "robotframework-myfirstlibrary"
-version = "0.0.2"
+version = "0.0.3"
 description = "A template for creating new robotframework libraries"
 license = "Apache-2.0"
 authors = ["Many Kasiriha"]
